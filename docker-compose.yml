@@ -1,0 +1,27 @@
+version: '3'
+services:
+
+  person-mongo-db:
+    image: mongo:latest
+    container_name: 'person-mongo-db'
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABSE=persons
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+    - ./mongo/mongo-volume:/data/db
+    ports:
+      - 27017:27017
+    tty: true
+
+  rest_service:
+    container_name: 'person-rest-service'
+    build: ./
+    ports:
+      - 8080:8080
+    environment:
+      WAIT_HOSTS: person-mongo-db:27017
+    depends_on:
+      - person-mongo-db
+    tty: true
